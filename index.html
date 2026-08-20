@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Monsieur White — Le Jeu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:wght@400;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="grain"></div>
+
+<div class="app">
+
+  <header class="topbar">
+    <span class="dossier" id="dossierNumber">AFFAIRE N° ----</span>
+  </header>
+
+  <main id="main">
+
+    <!-- ÉCRAN ACCUEIL -->
+    <section id="screen-home" class="screen active">
+      <div class="panel home-panel">
+        <p class="eyebrow">Une enquête pour 3 à 10 joueurs</p>
+        <h1 class="title">MONSIEUR<br>WHITE</h1>
+        <p class="tagline">Un joueur n'a pas de mot. Un autre ment peut-être.<br>Démasquez l'intrus avant qu'il ne s'échappe.</p>
+        <button id="btn-start" class="btn btn-primary">Commencer l'enquête</button>
+      </div>
+    </section>
+
+    <!-- ÉCRAN JOUEURS -->
+    <section id="screen-players" class="screen">
+      <div class="panel">
+        <p class="eyebrow">Étape 1 / 2</p>
+        <h2 class="section-title">Le tableau des suspects</h2>
+        <p class="hint">Ajoutez entre 3 et 10 joueurs. Chaque nom doit être unique.</p>
+
+        <form id="player-form" class="player-form">
+          <input id="player-name-input" type="text" maxlength="16" placeholder="Nom du joueur" autocomplete="off">
+          <button type="submit" id="btn-add-player" class="btn btn-icon" aria-label="Ajouter un joueur">+</button>
+        </form>
+        <p id="player-error" class="error-text"></p>
+
+        <ul id="player-list" class="player-list"></ul>
+        <p class="counter" id="player-counter">0 / 10 joueurs</p>
+
+        <button id="btn-to-mode" class="btn btn-primary" disabled>Continuer</button>
+      </div>
+    </section>
+
+    <!-- ÉCRAN MODE -->
+    <section id="screen-mode" class="screen">
+      <div class="panel">
+        <p class="eyebrow">Étape 2 / 2</p>
+        <h2 class="section-title">Choisissez l'affaire du jour</h2>
+
+        <div class="mode-grid" id="mode-grid">
+          <button class="mode-card" data-mode="white">
+            <span class="mode-name">Monsieur White</span>
+            <span class="mode-desc">Un joueur ne reçoit aucun mot. Il doit deviner le mot commun rien qu'en écoutant les indices — sans se faire repérer.</span>
+          </button>
+          <button class="mode-card" data-mode="imposteur">
+            <span class="mode-name">L'Imposteur</span>
+            <span class="mode-desc">Un joueur reçoit un mot différent, proche du mot commun. Il doit se fondre dans la masse sans être démasqué.</span>
+          </button>
+        </div>
+
+        <button id="btn-launch" class="btn btn-primary" disabled>Lancer la partie</button>
+      </div>
+    </section>
+
+    <!-- ÉCRAN RÉVÉLATION DES RÔLES -->
+    <section id="screen-reveal" class="screen">
+      <div class="panel">
+        <div class="progress-dots" id="reveal-dots"></div>
+        <p class="pass-instruction">Passe le téléphone à<br><strong id="reveal-name">—</strong></p>
+
+        <div class="card-flip" id="reveal-card">
+          <div class="card-face card-front">
+            <span class="card-icon">🕵️</span>
+            <span class="card-tap-text">Touche pour révéler ton rôle</span>
+          </div>
+          <div class="card-face card-back" id="reveal-back"></div>
+        </div>
+
+        <button id="btn-hide-card" class="btn btn-secondary hidden">C'est vu, je cache</button>
+        <button id="btn-next-reveal" class="btn btn-primary hidden">Joueur suivant</button>
+        <button id="btn-start-round" class="btn btn-primary hidden">Tout le monde a vu son rôle</button>
+      </div>
+    </section>
+
+    <!-- ÉCRAN DISCUSSION -->
+    <section id="screen-discussion" class="screen">
+      <div class="panel">
+        <p class="eyebrow" id="round-label">Manche 1</p>
+        <h2 class="section-title">À vous de parler</h2>
+        <p class="hint" id="discussion-rule"></p>
+        <p class="hint-small">Chacun donne à voix haute un mot lié à son mot secret, sans jamais le dire. Suivez l'ordre ci-dessous.</p>
+        <ol class="speak-order" id="speak-order"></ol>
+        <button id="btn-to-vote" class="btn btn-primary">Passer au vote</button>
+      </div>
+    </section>
+
+    <!-- ÉCRAN VOTE -->
+    <section id="screen-vote" class="screen">
+      <div class="panel">
+        <p class="pass-instruction">Au tour de<br><strong id="voter-name">—</strong><br>de voter</p>
+        <p class="hint">Qui soupçonnez-vous ?</p>
+        <div class="vote-grid" id="vote-grid"></div>
+      </div>
+    </section>
+
+    <!-- ÉCRAN RÉSULTAT DU VOTE -->
+    <section id="screen-vote-result" class="screen">
+      <div class="panel">
+        <h2 class="section-title" id="vote-result-title">Résultat du vote</h2>
+        <div class="tally" id="tally-list"></div>
+        <div class="stamp-card hidden" id="eliminated-card"></div>
+        <button id="btn-after-elimination" class="btn btn-primary hidden">Continuer</button>
+      </div>
+    </section>
+
+    <!-- ÉCRAN DEVINETTE MONSIEUR WHITE -->
+    <section id="screen-guess" class="screen">
+      <div class="panel">
+        <h2 class="section-title">Dernière chance</h2>
+        <p class="hint" id="guess-hint"></p>
+        <input id="guess-input" type="text" class="text-input" placeholder="Le mot commun était..." autocomplete="off">
+        <button id="btn-submit-guess" class="btn btn-primary">Valider</button>
+      </div>
+    </section>
+
+    <!-- ÉCRAN FIN -->
+    <section id="screen-end" class="screen">
+      <div class="panel">
+        <div class="stamp-card" id="end-stamp"></div>
+        <h2 class="section-title" id="end-title"></h2>
+        <p class="hint" id="end-summary"></p>
+        <div class="recap-list" id="recap-list"></div>
+        <div class="end-actions">
+          <button id="btn-replay-same" class="btn btn-secondary">Rejouer, mêmes joueurs</button>
+          <button id="btn-new-game" class="btn btn-primary">Nouvelle partie</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="script.js" defer></script>
+</body>
+</html>
